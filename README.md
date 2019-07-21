@@ -3,7 +3,7 @@
 Ansible playbook to set the software channel and update mikrotik devices
 
 ## Why?
-Why not? This is super simple and was a fun start to using the routeros module. It's also better to automate anything you need to do more than once, take humans out of the loop of repetitive tasks, and generally be more efficient. 
+Why not? This is super simple and was a fun start to using the routeros module. It's also better to automate anything you need to do more than once, take humans out of the loop of repetitive tasks, and generally be more efficient. I couldn't find anything else using the routeros module that did this, either. Use it until something better comes along. 
 
 ## How?
 Install ansible. Clone the repo and adjust the variables, accounting for your own file hierarchy. 
