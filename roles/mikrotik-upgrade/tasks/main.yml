@@ -1,0 +1,10 @@
+---
+- name: set routeros firmware channel
+  routeros_command:
+    commands:
+      - /system package update set channel=stable
+- name: upgrade packages and reboot
+  routeros_command:
+    commands:
+      - /system package update install
+

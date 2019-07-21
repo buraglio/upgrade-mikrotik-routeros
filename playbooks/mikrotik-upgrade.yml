@@ -1,0 +1,6 @@
+---
+- hosts: mikrotik
+  gather_facts: False
+  roles:
+    - mikrotik-upgrade
+

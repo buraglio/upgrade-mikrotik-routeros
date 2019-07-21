@@ -1,0 +1,13 @@
+# RouterOS Routers
+[network:children]
+mikrotik
+
+[mikrotik]
+10.100.100.100 # change this to somethintg useful, or use a range like below
+## c-10-100-100-[2:254].cpe.mywisp.net
+## 10.100.100.[2:254]
+[mikrotik:vars]
+ansible_network_os=routeros
+ansible_connection=network_cli
+# I use ssh keys for all access, it's fairly trivial to use ansible vault
+

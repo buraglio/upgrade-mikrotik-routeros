@@ -1,0 +1,6 @@
+---
+- hosts: cpe
+  gather_facts: False
+  roles:
+    - ubnt-ts
+
