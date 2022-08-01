@@ -1,10 +1,60 @@
 ---
-- name: set routeros firmware channel
+- name: Set routeros firmware channel
   routeros_command:
     commands:
-      - /system package update set channel=stable
-- name: upgrade packages and reboot
+      - /system package update set channel=long-term
+
+- name: Check for updates
+  routeros_command:
+    commands:
+      - /system package update check-for-updates
+  register: task_result
+- set_fact: status={{ task_result.stdout_lines[0] | regex_search('System is already+') }}
+
+- name: Upgrade packages
   routeros_command:
     commands:
       - /system package update install
+  when: status != "System is already"
 
+- name: Wait for the reboot to complete if there was a change.
+  wait_for_connection:
+    connect_timeout: 60
+    sleep: 5
+    delay: 5
+    timeout: 600
+  when: status != "System is already"
+
+- name: Check for routerboard upgrade
+  routeros_command:
+    commands:
+      - /system routerboard print
+  register: task_result_upgrade
+- set_fact: current={{ task_result_upgrade.stdout_lines[0][-2].split()[-1] }}
+- set_fact: upgrade={{ task_result_upgrade.stdout_lines[0][-1].split()[-1] }}
+
+- name: Upgrade firmware
+  routeros_command:
+    commands:
+      - :execute script="/system routerboard upgrade"
+  when: current != upgrade
+
+- name: reboot
+  routeros_command:
+    commands:
+      - /system scheduler add name=rebootonce on-event="/system reboot" start-time=([/system clock get time] + 00:00:30)
+  when: current != upgrade
+
+- name: Wait for the reboot to complete if there was a change.
+  wait_for_connection:
+    connect_timeout: 120
+    sleep: 5
+    delay: 45
+    timeout: 600
+  when: current != upgrade
+
+- name: Remove reboot script
+  routeros_command:
+    commands:
+      - /system scheduler remove rebootonce
+  when: current != upgrade
